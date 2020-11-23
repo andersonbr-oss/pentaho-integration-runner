@@ -10,10 +10,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<!-- <pentaho.version>8.3.0.0-189</pentaho.version> -->
+		<pentaho.version>8.3.0.0-371</pentaho.version>
 		<!-- <pentaho.version>8.2.0.0-342</pentaho.version> -->
 		<!-- <pentaho.version>9.2.0.0-125</pentaho.version> -->
-		<pentaho.version>9.1.0.0-324</pentaho.version>
+<!-- 		<pentaho.version>9.1.0.0-324</pentaho.version> -->
+<!-- 		<pentaho.version>9.2.0.0-130</pentaho.version> -->
 	</properties>
 	<repositories>
 		<repository>
@@ -65,7 +66,8 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>simple-jndi</artifactId>
-			<version>1.0.2</version>
+<!-- 			<version>1.0.2</version> -->
+			<version>1.0.3</version>
 		</dependency>
 	</dependencies>
 </project>

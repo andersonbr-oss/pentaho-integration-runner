@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import br.com.shellcode.pir.utils.PentahoUtils;
+
 //import java.sql.SQLException;
 
 //import java.util.Hashtable;
@@ -36,38 +38,54 @@ import java.util.zip.ZipInputStream;
 //import org.postgresql.jdbc3.Jdbc3SimpleDataSource;
 
 public class Runner {
-	private static String saveDir = getPluginsDir();
 
-//	private static String saveDir = "";
 	public static void main(String[] args) {
-		String strTmp = System.getProperty("java.io.tmpdir");
-		System.out.println("OS current temporary directory: " + strTmp);
-		System.out.println("OS Name: " + System.getProperty("os.name"));
-		System.out.println("OS Version: " + System.getProperty("os.version"));
+		/**
+		 * Download plugins to cache dir
+		 */
+//		downloadPlugins("9.1.0.0-324");
+
+		/**
+		 * Download libraries to cache dir
+		 */
+//		downloadLibs("9.1.0.0-324");
+
+		/**
+		 * initialize environment
+		 */
+		PentahoUtils.initEnv(getPluginsDir() + File.separator + "9.1.0.0-324");
+//		PentahoUtils.initEnv("D:/pentaho_pdi_plugins/data-integration/plugins/");
+
 		if (args.length > 0) {
 
 		} else {
 			scanKtr();
 		}
-		String pdiVersion = "9.1.0.0-324";
-		String plougens[] = { "kettle-dummy-plugin", "kettle-json-plugin", "pdi-core-plugins", "pdi-xml-plugin",
+	}
+
+	public static void downloadPlugins(String pdiVersion) {
+		String plugins[] = { "kettle-dummy-plugin", "kettle-json-plugin", "pdi-core-plugins", "pdi-xml-plugin",
 				"platform-utils-plugin" };
-		for (int i = 0; i < plougens.length; i++) {
-			downloadPlugin(pdiVersion, plougens[i]);
+		for (int i = 0; i < plugins.length; i++) {
+			downloadPlugin(pdiVersion, plugins[i]);
 		}
 	}
 
-	private static String getPluginsDir() {
+	private static String getPDIRunnerBaseDir() {
 		final String userDir = System.getProperty("user.home");
 		return (System.getProperty("os.name").compareToIgnoreCase("linux") == 0)
-				? userDir + File.separator + ".pdi_plugins"
-				: userDir + File.separator + "AppData" + File.separator + "Local" + File.separator + "PDI_Plugins";
+				? userDir + File.separator + ".pdi_runner"
+				: userDir + File.separator + "AppData" + File.separator + "Local" + File.separator + "PDI_Runner";
+	}
+
+	private static String getPluginsDir() {
+		return getPDIRunnerBaseDir() + File.separator + "plugins";
 	}
 
 	public static void downloadPlugin(String pdiVersion, String plugin) {
 		URL obj;
 		final int BUFFER_SIZE = 4096;
-		String saveDirPath = saveDir + File.separator + plugin;
+		String saveDirPath = getPluginsDir() + File.separator + pdiVersion + File.separator + plugin;
 		String saveFilePath = saveDirPath + ".zip";
 		try {
 			File destinationDir = new File(saveDirPath);
@@ -81,7 +99,56 @@ public class Runner {
 				conn.setInstanceFollowRedirects(true);
 				HttpURLConnection.setFollowRedirects(true);
 				InputStream inputStream = conn.getInputStream();
-				File directory = new File(saveDir);
+				File directory = new File(saveDirPath);
+				if (!directory.exists()) {
+					directory.mkdirs();
+				}
+
+				// opens an output stream to save into file
+				FileOutputStream outputStream = new FileOutputStream(saveFilePath);
+
+				int bytesRead = -1;
+				byte[] buffer = new byte[BUFFER_SIZE];
+				while ((bytesRead = inputStream.read(buffer)) != -1) {
+					outputStream.write(buffer, 0, bytesRead);
+				}
+
+				outputStream.close();
+				inputStream.close();
+
+			} else {
+			}
+			if (!destinationDir.exists()) {
+				// UNZIP
+				unzip(saveFilePath);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static String getLibsDir() {
+		return getPDIRunnerBaseDir() + File.separator + "lib";
+	}
+
+	public static void downloadLibs(String pdiVersion) {
+		URL obj;
+		final int BUFFER_SIZE = 4096;
+		String saveDirPath = getLibsDir() + File.separator + pdiVersion;
+		String saveFilePath = saveDirPath + ".zip";
+		try {
+			File destinationDir = new File(saveDirPath);
+			File destinationFile = new File(saveFilePath);
+			// nao existe, baixar
+			if (!destinationFile.exists()) {
+				String downloadPlugins = "https://github.com/andersonbr-oss/pentaho_pdi_plugins/raw/master/lib/"
+						+ pdiVersion + ".zip";
+				obj = new URL(downloadPlugins);
+				HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+				conn.setInstanceFollowRedirects(true);
+				HttpURLConnection.setFollowRedirects(true);
+				InputStream inputStream = conn.getInputStream();
+				File directory = new File(saveDirPath);
 				if (!directory.exists()) {
 					directory.mkdirs();
 				}
