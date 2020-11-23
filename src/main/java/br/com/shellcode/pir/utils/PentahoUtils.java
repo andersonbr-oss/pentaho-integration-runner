@@ -1,7 +1,9 @@
 package br.com.shellcode.pir.utils;
 
 import java.io.File;
+
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -19,6 +21,7 @@ import org.pentaho.di.core.plugins.PluginFolder;
 import org.pentaho.di.core.plugins.StepPluginType;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
+import org.pentaho.di.core.plugins.PluginFolderInterface;
 
 public class PentahoUtils {
 
@@ -45,7 +48,10 @@ public class PentahoUtils {
 				System.setProperty(k, props.get(k));
 			}
 			System.out.println("Plugins dir: " + pluginFolder);
-			StepPluginType.getInstance().getPluginFolders().add(new PluginFolder(pluginFolder, false, true));
+//			StepPluginType.getInstance().getPluginFolders().add(new PluginFolder(pluginFolder, false, true));
+			List<PluginFolderInterface> pluginFolders = StepPluginType.getInstance().getPluginFolders();
+			pluginFolders.add(new PluginFolder(pluginFolder + "/kettle-json-plugin", false, true));
+			
 			KettleEnvironment.init();
 			try {
 				InitialContext ic = new InitialContext(props);
