@@ -43,7 +43,7 @@ public class Runner {
 		/**
 		 * Download plugins to cache dir
 		 */
-//		downloadPlugins("9.1.0.0-324");
+		downloadPlugins("9.1.0.0-324");
 
 		/**
 		 * Download libraries to cache dir
@@ -53,6 +53,7 @@ public class Runner {
 		/**
 		 * initialize environment
 		 */
+//		System.out.println(getPDIRunnerBaseDir());
 		PentahoUtils.initEnv(getPluginsDir() + File.separator + "9.1.0.0-324");
 //		PentahoUtils.initEnv("D:/pentaho_pdi_plugins/data-integration/plugins/");
 
@@ -71,15 +72,8 @@ public class Runner {
 		}
 	}
 
-	private static String getPDIRunnerBaseDir() {
-		final String userDir = System.getProperty("user.home");
-		return (System.getProperty("os.name").compareToIgnoreCase("linux") == 0)
-				? userDir + File.separator + ".pdi_runner"
-				: userDir + File.separator + "AppData" + File.separator + "Local" + File.separator + "PDI_Runner";
-	}
-
 	private static String getPluginsDir() {
-		return getPDIRunnerBaseDir() + File.separator + "plugins";
+		return PentahoUtils.getPDIRunnerBaseDir() + File.separator + "plugins";
 	}
 
 	public static void downloadPlugin(String pdiVersion, String plugin) {
@@ -128,7 +122,7 @@ public class Runner {
 	}
 
 	private static String getLibsDir() {
-		return getPDIRunnerBaseDir() + File.separator + "lib";
+		return PentahoUtils.getPDIRunnerBaseDir() + File.separator + "lib";
 	}
 
 	public static void downloadLibs(String pdiVersion) {

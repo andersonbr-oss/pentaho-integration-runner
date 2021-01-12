@@ -27,12 +27,26 @@ public class PentahoUtils {
 
 	public static final String DSCONFIGPATH = getDSConfigPath() + File.separator + "connections.properties";
 
-	private static String getDSConfigPath() {
+	public static String getPDIRunnerBaseDir() {
 		final String userDir = System.getProperty("user.home");
-		return (System.getProperty("os.name").compareToIgnoreCase("linux") == 0)
-				? userDir + File.separator + ".pdi_runner" + File.separator + "config"
-				: userDir + File.separator + "AppData" + File.separator + "Local" + File.separator + "PDI_Runner"
-						+ File.separator + "config";
+		boolean LINUX = false;
+		boolean MAC = false;
+		switch (System.getProperty("os.name").toLowerCase()) {
+		case "mac os x":
+			MAC = true;
+			break;
+		case "linux":
+			LINUX = true;
+			break;
+		default:
+		}
+		return (LINUX) ? userDir + File.separator + ".pdi_runner"
+				: ((MAC) ? userDir + File.separator + "/Library/Application Support/pdi_runner"
+						: userDir + File.separator + "AppData" + File.separator + "Local" + File.separator + "PDI_Runner");
+	}
+	
+	private static String getDSConfigPath() {
+		return getPDIRunnerBaseDir() + File.separator + "config";
 	}
 
 	public static void initEnv(String pluginFolder) {
